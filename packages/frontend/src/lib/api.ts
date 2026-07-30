@@ -1,0 +1,72 @@
+const BASE_URL = import.meta.env.PROD ? import.meta.env.VITE_API_URL || '/api' : '/api'
+
+function getToken(): string | null {
+  try {
+    const saved = localStorage.getItem('notapintar_auth')
+    if (saved) {
+      const { token } = JSON.parse(saved)
+      return token || null
+    }
+  } catch {}
+  return null
+}
+
+async function request<T>(url: string, options?: RequestInit): Promise<T> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const token = getToken()
+  if (token) headers.Authorization = `Bearer ${token}`
+
+  const res = await fetch(`${BASE_URL}${url}`, {
+    headers: { ...headers, ...(options?.headers as Record<string, string>) },
+    ...options,
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Request failed' }))
+    throw new Error(err.error || `HTTP ${res.status}`)
+  }
+  return res.json()
+}
+
+export const api = {
+  profile: {
+    get: () => request<import('../types').BusinessProfile>('/profile'),
+    update: (data: Record<string, string | null | undefined>) =>
+      request<import('../types').BusinessProfile>('/profile', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    uploadLogo: async (file: File) => {
+      const form = new FormData()
+      form.append('logo', file)
+      const headers: Record<string, string> = {}
+      const token = getToken()
+      if (token) headers.Authorization = `Bearer ${token}`
+      const res = await fetch(`${BASE_URL}/profile/logo`, {
+        method: 'POST',
+        body: form,
+        headers,
+      })
+      if (!res.ok) throw new Error('Upload gagal')
+      return res.json() as Promise<{ logoPath: string }>
+    },
+  },
+  notes: {
+    getAll: () => request<import('../types').Note[]>('/notes'),
+    getById: (id: string) => request<import('../types').Note>(`/notes/${id}`),
+    create: (data: {
+      noteNumber?: string
+      customerName?: string
+      items: import('../types').NoteItem[]
+      grandTotal: number
+    }) =>
+      request<import('../types').Note>('/notes', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+  },
+  stats: {
+    get: () => request<import('../types').Stats>('/stats'),
+    visit: () => request<import('../types').Stats>('/stats/visit', { method: 'POST' }),
+    download: () => request<import('../types').Stats>('/stats/download', { method: 'POST' }),
+  },
+}

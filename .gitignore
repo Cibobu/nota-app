@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.turbo/
+*.db
+*.db-journal
+uploads/*
+!uploads/.gitkeep
+.env
+.env.local
+coverage/
+node_modules
