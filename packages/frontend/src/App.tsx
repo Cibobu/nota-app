@@ -22,7 +22,8 @@ const queryClient = new QueryClient({
   },
 })
 
-const API_BASE = import.meta.env.PROD ? import.meta.env.VITE_API_URL || '/api' : '/api'
+const raw = import.meta.env.PROD ? import.meta.env.VITE_API_URL || '/api' : '/api'
+const API_BASE = raw.endsWith('/api') ? raw : `${raw}/api`
 
 function Loading() {
   return (
