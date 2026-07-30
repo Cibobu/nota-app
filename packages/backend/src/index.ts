@@ -26,4 +26,11 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
+const PORT = process.env.PORT || 4000
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Nota Pintar API running on http://localhost:${PORT}`)
+  })
+}
+
 export default app

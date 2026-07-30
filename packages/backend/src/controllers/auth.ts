@@ -49,6 +49,7 @@ export async function login(req: Request, res: Response) {
       })
     }
   } catch (error) {
+    console.error('Login error:', error)
     res.status(500).json({ error: 'Gagal login' })
   }
 }
