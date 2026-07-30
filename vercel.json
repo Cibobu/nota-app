@@ -2,10 +2,10 @@
   "version": 2,
   "buildCommand": "npm install -w packages/backend && npx prisma generate --schema=packages/backend/prisma/schema.prisma && npm run build -w packages/backend",
   "functions": {
-    "packages/backend/api/index.ts": {
+    "api/index.ts": {
       "memory": 256,
       "maxDuration": 10
     }
   },
-  "routes": [{ "src": "/(.*)", "dest": "packages/backend/api/index.ts" }]
+  "routes": [{ "src": "/(.*)", "dest": "api/index.ts" }]
 }
