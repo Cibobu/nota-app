@@ -28,8 +28,7 @@ const FIXED_COLORS = `
 `
 
 function removeColorMix(doc: Document) {
-  const visit = (rules: CSSRuleList | undefined, parent: CSSGroupingRule | null) => {
-    if (!rules) return
+  function visit(rules: CSSRuleList, parent: CSSGroupingRule | CSSStyleSheet) {
     for (let i = rules.length - 1; i >= 0; i--) {
       try {
         const rule = rules[i]
@@ -37,15 +36,16 @@ function removeColorMix(doc: Document) {
           visit(rule.cssRules as CSSRuleList, rule as CSSGroupingRule)
         }
         if ('cssText' in rule && (rule.cssText as string).includes('color-mix(in oklab')) {
-          const target = (rule.parentRule as CSSGroupingRule)?.cssRules || rules
-          target.deleteRule(i)
+          parent.deleteRule(i)
         }
       } catch {}
     }
   }
   for (const sheet of doc.styleSheets) {
     try {
-      visit(sheet.cssRules, null)
+      if (sheet.cssRules) {
+        visit(sheet.cssRules, sheet)
+      }
     } catch {}
   }
 }

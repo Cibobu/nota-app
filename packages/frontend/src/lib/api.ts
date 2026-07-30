@@ -35,20 +35,6 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(data),
       }),
-    uploadLogo: async (file: File) => {
-      const form = new FormData()
-      form.append('logo', file)
-      const headers: Record<string, string> = {}
-      const token = getToken()
-      if (token) headers.Authorization = `Bearer ${token}`
-      const res = await fetch(`${BASE_URL}/profile/logo`, {
-        method: 'POST',
-        body: form,
-        headers,
-      })
-      if (!res.ok) throw new Error('Upload gagal')
-      return res.json() as Promise<{ logoPath: string }>
-    },
   },
   notes: {
     getAll: () => request<import('../types').Note[]>('/notes'),

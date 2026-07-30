@@ -32,7 +32,17 @@ export async function getProfile(req: Request, res: Response) {
 export async function updateProfile(req: Request, res: Response) {
   try {
     const userId = (req as any).userId
-    const { displayName, address, phone, email, ownerName, instagram, whatsapp, website } = req.body
+    const {
+      displayName,
+      address,
+      phone,
+      email,
+      ownerName,
+      instagram,
+      whatsapp,
+      website,
+      logoBase64,
+    } = req.body
 
     if (!displayName?.trim()) {
       res.status(400).json({ error: 'Nama pemilik/toko/brand wajib diisi' })
@@ -58,62 +68,27 @@ export async function updateProfile(req: Request, res: Response) {
       return
     }
 
-    const profile = await prisma.businessProfile.upsert({
-      where: { userId },
-      create: {
-        userId,
-        displayName: displayName.trim(),
-        address: address.trim(),
-        phone: phone?.trim() || null,
-        email: email?.trim() || null,
-        ownerName: ownerName?.trim() || null,
-        instagram: instagram?.trim() || null,
-        whatsapp: whatsapp?.trim() || null,
-        website: website?.trim() || null,
-      },
-      update: {
-        displayName: displayName.trim(),
-        address: address.trim(),
-        phone: phone?.trim() || null,
-        email: email?.trim() || null,
-        ownerName: ownerName?.trim() || null,
-        instagram: instagram?.trim() || null,
-        whatsapp: whatsapp?.trim() || null,
-        website: website?.trim() || null,
-      },
-    })
-
-    if (profile) {
-      setCache(cacheKey(userId), profile)
+    const data = {
+      displayName: displayName.trim(),
+      address: address.trim(),
+      phone: phone?.trim() || null,
+      email: email?.trim() || null,
+      ownerName: ownerName?.trim() || null,
+      instagram: instagram?.trim() || null,
+      whatsapp: whatsapp?.trim() || null,
+      website: website?.trim() || null,
+      logoBase64: logoBase64 || null,
     }
 
+    const profile = await prisma.businessProfile.upsert({
+      where: { userId },
+      create: { userId, ...data },
+      update: data,
+    })
+
+    setCache(cacheKey(userId), profile)
     res.json(profile)
   } catch (error) {
     res.status(500).json({ error: 'Gagal menyimpan profil' })
-  }
-}
-
-export async function uploadLogo(req: Request, res: Response) {
-  try {
-    const userId = (req as any).userId
-
-    if (!req.file) {
-      res.status(400).json({ error: 'No file uploaded' })
-      return
-    }
-
-    const logoPath = `/uploads/${req.file.filename}`
-
-    const existing = await prisma.businessProfile.findUnique({ where: { userId } })
-    const profile = existing
-      ? await prisma.businessProfile.update({ where: { userId }, data: { logoPath } })
-      : await prisma.businessProfile.create({
-          data: { userId, displayName: '', address: '', logoPath },
-        })
-
-    setCache(cacheKey(userId), profile)
-    res.json({ logoPath: profile.logoPath })
-  } catch (error) {
-    res.status(500).json({ error: 'Gagal upload logo' })
   }
 }

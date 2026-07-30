@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -8,6 +8,7 @@ import { useAuth } from '../lib/auth'
 export default function Profile() {
   const { user, profile, isNew, setProfile } = useAuth()
   const navigate = useNavigate()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState({
     displayName: '',
@@ -20,8 +21,7 @@ export default function Profile() {
     website: '',
   })
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [logoBase64, setLogoBase64] = useState<string | null>(null)
   const [waSameAsPhone, setWaSameAsPhone] = useState(false)
 
   useEffect(() => {
@@ -37,8 +37,8 @@ export default function Profile() {
     }
     setForm(init)
 
-    if (profile?.logoPath) {
-      setLogoUrl(profile.logoPath)
+    if (profile?.logoBase64) {
+      setLogoBase64(profile.logoBase64)
     }
 
     if (profile?.whatsapp === (profile?.phone || user?.phone)) {
@@ -82,6 +82,7 @@ export default function Profile() {
         instagram: form.instagram.trim().replace('@', '') || null,
         whatsapp: form.whatsapp.trim() || null,
         website: form.website.trim() || null,
+        logoBase64: logoBase64 || null,
       })
       setProfile(result)
       toast.success('Profil berhasil disimpan')
@@ -93,7 +94,7 @@ export default function Profile() {
     }
   }
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -102,24 +103,16 @@ export default function Profile() {
       return
     }
 
-    setUploading(true)
-    try {
-      const result = await api.profile.uploadLogo(file)
-      setLogoUrl(result.logoPath)
-      toast.success('Logo berhasil diupload')
-    } catch {
-      toast.error('Gagal upload logo')
-    } finally {
-      setUploading(false)
+    const reader = new FileReader()
+    reader.onload = () => {
+      setLogoBase64(reader.result as string)
+      toast.success('Logo siap disimpan')
     }
+    reader.onerror = () => toast.error('Gagal membaca file')
+    reader.readAsDataURL(file)
   }
 
   const initials = (form.displayName || 'N').slice(0, 2).toUpperCase()
-  const logoFullUrl = logoUrl
-    ? logoUrl.startsWith('http')
-      ? logoUrl
-      : `${import.meta.env.PROD ? import.meta.env.VITE_API_URL || '' : ''}${logoUrl}`
-    : null
 
   const registeredViaEmail = !!user?.email
   const registeredViaPhone = !!user?.phone
@@ -150,8 +143,8 @@ export default function Profile() {
             <div className="flex items-center gap-4">
               <div className="avatar">
                 <div className="w-20 rounded-box bg-base-200 flex items-center justify-center overflow-hidden">
-                  {logoFullUrl ? (
-                    <img src={logoFullUrl} alt="Logo" className="object-contain w-full h-full" />
+                  {logoBase64 ? (
+                    <img src={logoBase64} alt="Logo" className="object-contain w-full h-full" />
                   ) : (
                     <span className="text-2xl font-heading font-bold text-base-content/40">
                       {initials}
@@ -161,15 +154,27 @@ export default function Profile() {
               </div>
               <div className="flex-1">
                 <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   onChange={handleLogoUpload}
                   className="file-input file-input-bordered file-input-sm w-full"
-                  disabled={uploading}
                 />
                 <p className="text-xs text-base-content/40 mt-1">
-                  Max 2MB. JPG, PNG, WebP. {!logoUrl ? 'Kosongi untuk logo otomatis' : ''}
+                  Max 2MB. JPG, PNG, WebP. {!logoBase64 ? 'Kosongi untuk logo otomatis' : ''}
                 </p>
+                {logoBase64 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLogoBase64(null)
+                      if (fileInputRef.current) fileInputRef.current.value = ''
+                    }}
+                    className="btn btn-ghost btn-xs text-error mt-1"
+                  >
+                    Hapus logo
+                  </button>
+                )}
               </div>
             </div>
           </div>

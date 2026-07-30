@@ -21,7 +21,12 @@ export function useNote(id: string) {
 export function useCreateNote() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: { items: NoteItem[]; grandTotal: number }) => api.notes.create(data),
+    mutationFn: (data: {
+      noteNumber?: string
+      customerName?: string
+      items: NoteItem[]
+      grandTotal: number
+    }) => api.notes.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['notes'] })
     },

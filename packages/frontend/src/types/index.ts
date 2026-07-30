@@ -16,7 +16,7 @@ export interface BusinessProfile {
   instagram: string | null
   whatsapp: string | null
   website: string | null
-  logoPath: string | null
+  logoBase64: string | null
   createdAt: string
   updatedAt: string
 }

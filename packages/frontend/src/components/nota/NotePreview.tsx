@@ -12,8 +12,6 @@ interface NotePreviewProps {
   customerName?: string | null
 }
 
-const API_URL = import.meta.env.PROD ? import.meta.env.VITE_API_URL || '' : ''
-
 const s = {
   wrapper: {
     width: '100%',
@@ -179,11 +177,7 @@ export default function NotePreview({
   const trackDownload = useTrackDownload()
   const date = formatDate(new Date().toISOString())
 
-  const logoUrl = profile?.logoPath
-    ? profile.logoPath.startsWith('http')
-      ? profile.logoPath
-      : `${API_URL}${profile.logoPath}`
-    : null
+  const logoUrl = profile?.logoBase64 || null
 
   const handleExport = useCallback(
     async (type: 'pdf' | 'jpg') => {
@@ -258,7 +252,7 @@ export default function NotePreview({
       <div ref={noteRef} style={s.wrapper}>
         <div style={{ ...s.center, ...s.mb6 }}>
           {logoUrl ? (
-            <img src={logoUrl} alt="Logo" style={s.logo} crossOrigin="anonymous" />
+            <img src={logoUrl} alt="Logo" style={s.logo} />
           ) : (
             <div style={s.logoFallback}>
               <span style={s.logoInitials}>

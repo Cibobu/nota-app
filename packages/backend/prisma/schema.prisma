@@ -3,12 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   email     String?  @unique
   phone     String?  @unique
   token     String?
@@ -17,25 +18,25 @@ model User {
 }
 
 model BusinessProfile {
-  id           String   @id @default(uuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id])
-  displayName  String
-  address      String
-  phone        String?
-  email        String?
-  ownerName    String?
-  instagram    String?
-  whatsapp     String?
-  website      String?
-  logoPath     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @unique @db.Uuid
+  user        User     @relation(fields: [userId], references: [id])
+  displayName String
+  address     String
+  phone       String?
+  email       String?
+  ownerName   String?
+  instagram   String?
+  whatsapp    String?
+  website     String?
+  logoBase64  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Note {
-  id           String   @id @default(uuid())
-  userId       String
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
   noteNumber   String
   customerName String?
   date         DateTime @default(now())

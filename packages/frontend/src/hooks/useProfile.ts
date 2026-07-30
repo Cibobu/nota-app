@@ -19,13 +19,3 @@ export function useUpdateProfile() {
     },
   })
 }
-
-export function useUploadLogo() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: api.profile.uploadLogo,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile'] })
-    },
-  })
-}

@@ -11,18 +11,18 @@ async function main() {
     console.log('Stats seeded')
   }
 
-  const existingProfile = await prisma.businessProfile.findFirst()
-  if (!existingProfile) {
-    await prisma.businessProfile.create({
-      data: {
-        businessName: 'Toko Saya',
-        address: 'Jl. Contoh No. 123',
-        phone: '0812-3456-7890',
-        ownerName: 'Nama Pemilik',
-      },
-    })
-    console.log('Profile seeded')
-  }
+    const existingProfile = await prisma.businessProfile.findFirst()
+    if (!existingProfile) {
+      await prisma.businessProfile.create({
+        data: {
+          displayName: 'Toko Saya',
+          address: 'Jl. Contoh No. 123',
+          phone: '0812-3456-7890',
+          ownerName: 'Nama Pemilik',
+        },
+      })
+      console.log('Profile seeded')
+    }
 }
 
 main()
