@@ -160,7 +160,7 @@ export default function Profile() {
                   onChange={handleLogoUpload}
                   className="file-input file-input-bordered file-input-sm w-full"
                 />
-                <p className="text-xs text-base-content/40 mt-1">
+                <p className="text-xs text-base-content/60 mt-1">
                   Max 2MB. JPG, PNG, WebP. {!logoBase64 ? 'Kosongi untuk logo otomatis' : ''}
                 </p>
                 {logoBase64 && (
@@ -229,7 +229,7 @@ export default function Profile() {
                   </span>
                 )}
                 {user?.phone && (
-                  <span className="label-text-alt text-base-content/40 text-xs mt-1">
+                  <span className="label-text-alt text-base-content/60 text-xs mt-1">
                     Terisi otomatis dari data pendaftaran
                   </span>
                 )}
@@ -253,14 +253,14 @@ export default function Profile() {
                   </span>
                 )}
                 {user?.email && (
-                  <span className="label-text-alt text-base-content/40 text-xs mt-1">
+                  <span className="label-text-alt text-base-content/60 text-xs mt-1">
                     Terisi otomatis dari data pendaftaran
                   </span>
                 )}
               </label>
             </div>
 
-            <div className="divider text-xs text-base-content/40">
+            <div className="divider text-xs text-base-content/60">
               Informasi Tambahan (opsional)
             </div>
 

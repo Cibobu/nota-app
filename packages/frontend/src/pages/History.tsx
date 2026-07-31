@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import ShareButton from '../components/ui/ShareButton'
 import { api } from '../lib/api'
 import { formatCurrency, formatDate } from '../lib/export'
 import type { Note } from '../types'
@@ -55,7 +56,7 @@ export default function History() {
                 />
               </svg>
               <p className="text-base-content/60 mb-1">Belum ada nota</p>
-              <p className="text-sm text-base-content/40">Buat nota pertama kamu sekarang</p>
+              <p className="text-sm text-base-content/60">Buat nota pertama kamu sekarang</p>
               <button
                 type="button"
                 onClick={() => navigate('/create')}
@@ -70,35 +71,48 @@ export default function History() {
             {notes.map((note: Note) => (
               <div
                 key={note.id}
-                className="card bg-base-100 border border-base-200 shadow-sm hover:border-primary transition-colors cursor-pointer"
-                onClick={() => navigate(`/preview/${note.id}`)}
+                className="card bg-base-100 border border-base-200 shadow-sm hover:border-primary transition-colors"
               >
-                <div className="card-body p-4 sm:p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="font-heading font-semibold text-sm text-neutral truncate">
-                        {note.noteNumber}
-                      </h3>
-                      <p className="text-xs text-base-content/40 mt-0.5">
-                        {formatDate(note.createdAt)}
-                      </p>
-                      <p className="text-xs text-base-content/40">{note.items?.length || 0} item</p>
+                <div className="card-body p-4 sm:p-5 flex flex-row items-center gap-2 sm:gap-3">
+                  <Link
+                    to={`/preview/${note.id}`}
+                    className="flex-1 min-w-0 group"
+                    aria-label={`Buka nota ${note.noteNumber}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="font-heading font-semibold text-sm text-neutral truncate group-hover:text-primary transition-colors">
+                          {note.noteNumber}
+                        </h3>
+                        <p className="text-xs text-base-content/60 mt-0.5">
+                          {formatDate(note.date)}
+                        </p>
+                        <p className="text-xs text-base-content/60">
+                          {note.items?.length || 0} item
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-heading font-bold text-primary tabular-nums">
+                          {formatCurrency(note.grandTotal)}
+                        </p>
+                        <span className="text-xs text-base-content/60 inline-flex items-center gap-1 mt-1">
+                          Lihat
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-3 w-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            aria-hidden="true"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      <p className="font-heading font-bold text-primary">
-                        {formatCurrency(note.grandTotal)}
-                      </p>
-                      <span
-                        className="btn btn-ghost btn-xs text-secondary mt-1"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          navigate(`/preview/${note.id}`)
-                        }}
-                      >
-                        Lihat
-                      </span>
-                    </div>
-                  </div>
+                  </Link>
+                  <ShareButton token={note.shareToken} />
                 </div>
               </div>
             ))}

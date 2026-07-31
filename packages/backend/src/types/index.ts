@@ -6,8 +6,8 @@ export interface NoteItem {
 }
 
 export interface CreateNoteBody {
-  noteNumber?: string
   customerName?: string
+  customerPhone?: string
   items: NoteItem[]
   grandTotal: number
 }

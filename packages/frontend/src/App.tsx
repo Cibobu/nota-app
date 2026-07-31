@@ -12,6 +12,7 @@ const Profile = lazy(() => import('./pages/Profile'))
 const CreateNote = lazy(() => import('./pages/CreateNote'))
 const Preview = lazy(() => import('./pages/Preview'))
 const History = lazy(() => import('./pages/History'))
+const PublicNote = lazy(() => import('./pages/PublicNote'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +51,7 @@ function AppRoutes() {
     <Suspense fallback={<Loading />}>
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+        <Route path="/s/:token" element={<PublicNote />} />
         <Route
           element={
             <ProtectedRoute>

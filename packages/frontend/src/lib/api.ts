@@ -40,9 +40,10 @@ export const api = {
   notes: {
     getAll: () => request<import('../types').Note[]>('/notes'),
     getById: (id: string) => request<import('../types').Note>(`/notes/${id}`),
+    nextNumber: () => request<{ noteNumber: string }>('/notes/next-number'),
     create: (data: {
-      noteNumber?: string
       customerName?: string
+      customerPhone?: string
       items: import('../types').NoteItem[]
       grandTotal: number
     }) =>
@@ -50,6 +51,10 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+  },
+  public: {
+    getNote: (token: string) =>
+      request<import('../types').PublicNote>(`/public/notes/${encodeURIComponent(token)}`),
   },
   stats: {
     get: () => request<import('../types').Stats>('/stats'),

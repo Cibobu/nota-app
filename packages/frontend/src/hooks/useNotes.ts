@@ -18,12 +18,20 @@ export function useNote(id: string) {
   })
 }
 
+export function useNextNoteNumber() {
+  return useQuery({
+    queryKey: ['notes', 'next-number'],
+    queryFn: api.notes.nextNumber,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useCreateNote() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (data: {
-      noteNumber?: string
       customerName?: string
+      customerPhone?: string
       items: NoteItem[]
       grandTotal: number
     }) => api.notes.create(data),

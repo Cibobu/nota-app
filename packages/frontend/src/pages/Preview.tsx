@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async'
 import { Link, useParams } from 'react-router-dom'
 import NotePreview from '../components/nota/NotePreview'
+import ShareButton from '../components/ui/ShareButton'
 import { useNote } from '../hooks/useNotes'
 import { useProfile } from '../hooks/useProfile'
 
@@ -44,16 +45,21 @@ export default function Preview() {
       </Helmet>
 
       <div className="space-y-4">
-        <Link to="/" className="btn btn-ghost btn-sm no-print">
-          &larr; Kembali
-        </Link>
+        <div className="flex items-center justify-between no-print">
+          <Link to="/" className="btn btn-ghost btn-sm">
+            &larr; Kembali
+          </Link>
+          <ShareButton token={note.shareToken} />
+        </div>
 
         <NotePreview
           items={note.items}
           grandTotal={note.grandTotal}
           profile={profile}
           noteNumber={note.noteNumber}
+          date={note.date}
           customerName={note.customerName}
+          customerPhone={note.customerPhone}
         />
       </div>
     </>

@@ -35,14 +35,16 @@ model BusinessProfile {
 }
 
 model Note {
-  id           String   @id @default(uuid()) @db.Uuid
-  userId       String   @db.Uuid
-  noteNumber   String
-  customerName String?
-  date         DateTime @default(now())
-  items        String
-  grandTotal   Float
-  createdAt    DateTime @default(now())
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  noteNumber    String
+  customerName  String?
+  customerPhone String?
+  date          DateTime @default(now())
+  items         String
+  grandTotal    Float
+  shareToken    String?  @unique
+  createdAt     DateTime @default(now())
 }
 
 model Stats {

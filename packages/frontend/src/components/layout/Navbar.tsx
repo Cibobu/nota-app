@@ -11,7 +11,7 @@ export default function Navbar() {
   const { pathname } = useLocation()
 
   return (
-    <div className="navbar bg-base-100 shadow-sm border-b border-base-200">
+    <div className="navbar sticky top-0 z-40 bg-base-100 shadow-sm border-b border-base-200">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-xl font-heading font-bold text-primary px-2">
           Nota Pintar

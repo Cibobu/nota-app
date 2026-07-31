@@ -45,14 +45,17 @@ export default function Dashboard() {
                 Buat nota / invoice online gratis. Download PDF atau JPG, langsung share ke
                 pelanggan via WhatsApp dan sosmed.
               </p>
-              <Link to="/create" className="btn btn-accent btn-lg text-white">
+              <Link
+                to="/create"
+                className="btn btn-accent btn-lg text-neutral font-semibold shadow-sm"
+              >
                 Buat Nota Baru
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="stats shadow-sm w-full bg-base-100 border border-base-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
           {isLoading ? (
             <div className="stat">
               <div className="skeleton h-4 w-20 mb-2" />
@@ -115,7 +118,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
             to="/profile"
-            className="card bg-base-100 shadow-sm border border-base-200 hover:border-primary transition-colors"
+            className="card bg-base-100 shadow-sm border border-base-200 hover:border-primary hover:shadow-md transition-all"
           >
             <div className="card-body p-5">
               <h3 className="card-title text-sm font-heading">
@@ -141,7 +144,7 @@ export default function Dashboard() {
 
           <Link
             to="/create"
-            className="card bg-base-100 shadow-sm border border-base-200 hover:border-secondary transition-colors"
+            className="card bg-base-100 shadow-sm border border-base-200 hover:border-secondary hover:shadow-md transition-all"
           >
             <div className="card-body p-5">
               <h3 className="card-title text-sm font-heading">
@@ -169,7 +172,7 @@ export default function Dashboard() {
 
           <Link
             to="/history"
-            className="card bg-base-100 shadow-sm border border-base-200 hover:border-accent transition-colors"
+            className="card bg-base-100 shadow-sm border border-base-200 hover:border-accent hover:shadow-md transition-all"
           >
             <div className="card-body p-5">
               <h3 className="card-title text-sm font-heading">

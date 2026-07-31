@@ -1,27 +1,43 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import NoteForm from '../components/nota/NoteForm'
 import NotePreview from '../components/nota/NotePreview'
 import EmptyState from '../components/ui/EmptyState'
-import { useCreateNote } from '../hooks/useNotes'
+import { useCreateNote, useNextNoteNumber } from '../hooks/useNotes'
 import { useProfile } from '../hooks/useProfile'
 import type { NoteItem } from '../types'
 
 export default function CreateNote() {
   const { data: profile } = useProfile()
   const createNote = useCreateNote()
+  const { data: nextNumber } = useNextNoteNumber()
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const [items, setItems] = useState<NoteItem[]>([])
   const [useCustomTotal, setUseCustomTotal] = useState(false)
   const [customTotal, setCustomTotal] = useState('')
-  const [noteNumber, setNoteNumber] = useState(`NOTA-${String(Date.now()).slice(-6)}`)
   const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
+  const savedRef = useRef<string | null>(null)
 
   const grandTotal = useMemo(() => {
     if (useCustomTotal) return Number(customTotal) || 0
     return items.reduce((sum, item) => sum + item.total, 0)
   }, [items, useCustomTotal, customTotal])
+
+  const buildPayload = useCallback(
+    () => ({
+      customerName: customerName.trim() || undefined,
+      customerPhone: customerPhone.trim() || undefined,
+      items,
+      grandTotal,
+    }),
+    [customerName, customerPhone, items, grandTotal],
+  )
 
   const handleAddItem = useCallback((item: NoteItem) => {
     setItems((prev) => [...prev, item])
@@ -31,24 +47,44 @@ export default function CreateNote() {
     setItems((prev) => prev.filter((_, i) => i !== index))
   }, [])
 
-  const handleSave = useCallback(async () => {
+  const handleBeforeExport = useCallback(async () => {
+    if (savedRef.current) return
+    if (!items.length) {
+      toast.error('Belum ada item untuk disimpan')
+      throw new Error('Belum ada item untuk disimpan')
+    }
+    const result = await createNote.mutateAsync(buildPayload())
+    savedRef.current = result.id
+    queryClient.invalidateQueries({ queryKey: ['notes', 'next-number'] })
+  }, [items, buildPayload, createNote, queryClient])
+
+  const handleExported = useCallback(() => {
+    const id = savedRef.current
+    if (id) navigate(`/preview/${id}`)
+  }, [navigate])
+
+  const handleSaveToHistory = useCallback(async () => {
     if (!items.length) {
       toast.error('Belum ada item untuk disimpan')
       return
     }
     try {
-      await createNote.mutateAsync({
-        noteNumber: noteNumber.trim() || undefined,
-        customerName: customerName.trim() || undefined,
-        items,
-        grandTotal,
-      })
-      toast.success('Nota berhasil disimpan!')
+      const result = await createNote.mutateAsync(buildPayload())
+      savedRef.current = null
       setItems([])
+      setCustomerName('')
+      setCustomerPhone('')
+      queryClient.invalidateQueries({ queryKey: ['notes', 'next-number'] })
+      toast.success('Nota tersimpan di riwayat', {
+        action: {
+          label: 'Lihat',
+          onClick: () => navigate(`/preview/${result.id}`),
+        },
+      })
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Gagal menyimpan nota')
     }
-  }, [items, grandTotal, noteNumber, customerName, createNote])
+  }, [items, buildPayload, createNote, queryClient, navigate])
 
   return (
     <>
@@ -73,10 +109,13 @@ export default function CreateNote() {
                 <input
                   type="text"
                   className="input input-bordered w-full"
-                  value={noteNumber}
-                  onChange={(e) => setNoteNumber(e.target.value)}
-                  placeholder="NOTA-XXXX"
+                  value={nextNumber?.noteNumber || ''}
+                  readOnly
+                  placeholder="Menghitung..."
                 />
+                <span className="label-text-alt text-base-content/60 text-xs mt-1">
+                  Nomor nota dibuat otomatis
+                </span>
               </label>
 
               <label className="form-control w-full">
@@ -90,6 +129,18 @@ export default function CreateNote() {
                 />
               </label>
             </div>
+
+            <label className="form-control w-full sm:w-1/2">
+              <span className="label-text">No. HP Pelanggan (opsional)</span>
+              <input
+                type="tel"
+                inputMode="tel"
+                className="input input-bordered w-full"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                placeholder="0812-3456-7890"
+              />
+            </label>
           </div>
         </div>
 
@@ -144,7 +195,7 @@ export default function CreateNote() {
 
               <div className="flex justify-between items-center mt-3 pt-3 border-t border-base-200">
                 <span className="font-heading font-bold text-sm">Grand Total</span>
-                <span className="text-xl font-heading font-bold text-primary">
+                <span className="text-xl font-heading font-bold text-primary tabular-nums">
                   Rp {grandTotal.toLocaleString('id-ID')}
                 </span>
               </div>
@@ -157,8 +208,12 @@ export default function CreateNote() {
             items={items}
             grandTotal={grandTotal}
             profile={profile}
-            noteNumber={noteNumber}
+            noteNumber={nextNumber?.noteNumber || ''}
+            date={new Date().toISOString()}
             customerName={customerName.trim() || undefined}
+            customerPhone={customerPhone.trim() || undefined}
+            onBeforeExport={handleBeforeExport}
+            onExported={handleExported}
           />
         ) : (
           <EmptyState
@@ -168,10 +223,19 @@ export default function CreateNote() {
         )}
 
         {items.length > 0 && (
-          <button type="button" onClick={handleSave} className="btn btn-outline w-full no-print">
-            {createNote.isPending ? <span className="loading loading-spinner" /> : null}
-            {createNote.isPending ? 'Menyimpan...' : 'Simpan ke Riwayat'}
-          </button>
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={handleSaveToHistory}
+              className="btn btn-outline w-full no-print"
+            >
+              {createNote.isPending ? <span className="loading loading-spinner" /> : null}
+              {createNote.isPending ? 'Menyimpan...' : 'Simpan ke Riwayat'}
+            </button>
+            <p className="text-xs text-base-content/60 text-center">
+              Klik Download PDF/JPG akan otomatis menyimpan nota ke riwayat
+            </p>
+          </div>
         )}
       </div>
     </>

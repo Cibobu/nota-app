@@ -27,54 +27,51 @@ export default function Login() {
   }
 
   return (
-    <>
+    <div className="min-h-dvh bg-base-200 flex items-center justify-center p-4">
       <Helmet>
         <title>Masuk - Nota Pintar</title>
       </Helmet>
 
-      <div className="hero min-h-[80vh]">
-        <div className="hero-content w-full max-w-sm">
-          <div className="card bg-base-100 shadow-xl w-full">
-            <div className="card-body p-6 sm:p-8">
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 bg-primary rounded-box flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl font-heading font-bold text-white">N</span>
-                </div>
-                <h1 className="text-xl font-heading font-bold">Nota Pintar</h1>
-                <p className="text-sm text-base-content/60 mt-1">
-                  Masukkan email atau no HP untuk memulai
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <label className="form-control w-full">
-                  <span className="label-text text-sm">Email atau No. Handphone</span>
-                  <input
-                    type="text"
-                    className="input input-bordered w-full"
-                    placeholder="contoh@email.com atau 0812xxxx"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    required
-                  />
-                </label>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary w-full"
-                  disabled={loading || !identifier.trim()}
-                >
-                  {loading ? <span className="loading loading-spinner" /> : 'Masuk'}
-                </button>
-              </form>
-
-              <p className="text-xs text-base-content/40 text-center mt-4">
-                Dengan masuk, kamu menyetujui penggunaan data untuk aplikasi ini
-              </p>
+      <div className="card bg-base-100 shadow-xl w-full max-w-sm">
+        <div className="card-body p-6 sm:p-8">
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+              <span className="text-2xl font-heading font-bold text-white">N</span>
             </div>
+            <h1 className="text-xl font-heading font-bold">Nota Pintar</h1>
+            <p className="text-sm text-base-content/60 mt-1">
+              Masukkan email atau no HP untuk memulai
+            </p>
           </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <label className="form-control w-full">
+              <span className="label-text text-sm">Email atau No. Handphone</span>
+              <input
+                type="text"
+                className="input input-bordered w-full"
+                placeholder="contoh@email.com atau 0812xxxx"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                autoComplete="username"
+                required
+              />
+            </label>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={loading || !identifier.trim()}
+            >
+              {loading ? <span className="loading loading-spinner" /> : 'Masuk'}
+            </button>
+          </form>
+
+          <p className="text-xs text-base-content/60 text-center mt-4">
+            Dengan masuk, kamu menyetujui penggunaan data untuk aplikasi ini
+          </p>
         </div>
       </div>
-    </>
+    </div>
   )
 }

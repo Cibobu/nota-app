@@ -3,6 +3,7 @@ import express from 'express'
 import authRoutes from './routes/auth.js'
 import notesRoutes from './routes/notes.js'
 import profileRoutes from './routes/profile.js'
+import publicRoutes from './routes/public.js'
 import statsRoutes from './routes/stats.js'
 
 const app = express()
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/api/notes', notesRoutes)
 app.use('/api/stats', statsRoutes)
+app.use('/api/public', publicRoutes)
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })

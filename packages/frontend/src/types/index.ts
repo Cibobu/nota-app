@@ -32,10 +32,32 @@ export interface Note {
   id: string
   noteNumber: string
   customerName: string | null
+  customerPhone: string | null
   date: string
   items: NoteItem[]
   grandTotal: number
   createdAt: string
+  shareToken: string | null
+}
+
+export interface PublicNoteBusiness {
+  displayName: string | null
+  ownerName: string | null
+  address: string | null
+  phone: string | null
+  instagram: string | null
+  whatsapp: string | null
+  logoBase64: string | null
+}
+
+export interface PublicNote {
+  noteNumber: string
+  date: string
+  customerName: string | null
+  customerPhone: string | null
+  items: NoteItem[]
+  grandTotal: number
+  business: PublicNoteBusiness
 }
 
 export interface Stats {
