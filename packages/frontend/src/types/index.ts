@@ -25,6 +25,7 @@ export interface BusinessProfile {
 export interface NoteItem {
   name: string
   quantity: number
+  unit: string
   price: number
   total: number
 }

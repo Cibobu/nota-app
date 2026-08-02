@@ -2,6 +2,29 @@ import { forwardRef } from 'react'
 import { formatCurrency, formatDate } from '../../lib/export'
 import type { NoteItem } from '../../types'
 
+const UNIT_LABELS: Record<string, string> = {
+  pcs: 'Pcs',
+  buah: 'Buah',
+  lusin: 'Lusin',
+  kodi: 'Kodi',
+  pack: 'Pack',
+  dus: 'Dus',
+  kg: 'Kg',
+  gram: 'Gram',
+  ons: 'Ons',
+  liter: 'Liter',
+  ml: 'ml',
+  meter: 'Meter',
+  cm: 'cm',
+  lembar: 'Lembar',
+  set: 'Set',
+  pasang: 'Pasang',
+  orang: 'Orang',
+  unit: 'Unit',
+  rim: 'Rim',
+  batang: 'Batang',
+}
+
 export interface ReceiptBusiness {
   displayName: string | null
   logoUrl: string | null
@@ -112,7 +135,7 @@ const s = {
   },
   thCenter: {
     textAlign: 'center' as const,
-    padding: '4px 8px 4px 0',
+    padding: '4px 8px',
     borderBottom: '1px solid #e2e8f0',
     fontWeight: 600,
   },
@@ -134,7 +157,7 @@ const s = {
   },
   tdCenter: {
     textAlign: 'center' as const,
-    padding: '4px 8px 4px 0',
+    padding: '4px 8px',
     borderBottom: '1px solid #f8fafc',
   },
   tdRight: {
@@ -180,6 +203,10 @@ const s = {
   },
 }
 
+function formatUnit(item: NoteItem): string {
+  return `${item.quantity} ${UNIT_LABELS[item.unit] || item.unit}`
+}
+
 const NoteReceipt = forwardRef<HTMLDivElement, NoteReceiptProps>(function NoteReceipt(
   { business, items, grandTotal, noteNumber, date, customerName, customerPhone },
   ref,
@@ -217,7 +244,7 @@ const NoteReceipt = forwardRef<HTMLDivElement, NoteReceiptProps>(function NoteRe
       <table style={s.table}>
         <thead>
           <tr>
-            <th style={s.th}>#</th>
+            <th style={s.thCenter}>Jumlah</th>
             <th style={s.th}>Nama</th>
             <th style={s.thRight}>Harga</th>
             <th style={s.thRightLast}>Total</th>
@@ -226,7 +253,7 @@ const NoteReceipt = forwardRef<HTMLDivElement, NoteReceiptProps>(function NoteRe
         <tbody>
           {items.map((item, i) => (
             <tr key={`${item.name}-${i}`}>
-              <td style={s.tdCenter}>{item.quantity}</td>
+              <td style={s.tdCenter}>{formatUnit(item)}</td>
               <td style={s.td}>{item.name}</td>
               <td style={s.tdRight}>{formatCurrency(item.price)}</td>
               <td style={s.tdRightLast}>{formatCurrency(item.total)}</td>

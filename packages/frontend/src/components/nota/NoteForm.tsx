@@ -2,6 +2,29 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { NoteItem } from '../../types'
 
+const UNITS = [
+  { value: 'pcs', label: 'Pcs' },
+  { value: 'buah', label: 'Buah' },
+  { value: 'lusin', label: 'Lusin' },
+  { value: 'kodi', label: 'Kodi' },
+  { value: 'pack', label: 'Pack' },
+  { value: 'dus', label: 'Dus' },
+  { value: 'kg', label: 'Kg' },
+  { value: 'gram', label: 'Gram' },
+  { value: 'ons', label: 'Ons' },
+  { value: 'liter', label: 'Liter' },
+  { value: 'ml', label: 'ml' },
+  { value: 'meter', label: 'Meter' },
+  { value: 'cm', label: 'cm' },
+  { value: 'lembar', label: 'Lembar' },
+  { value: 'set', label: 'Set' },
+  { value: 'pasang', label: 'Pasang' },
+  { value: 'orang', label: 'Orang' },
+  { value: 'unit', label: 'Unit' },
+  { value: 'rim', label: 'Rim' },
+  { value: 'batang', label: 'Batang' },
+]
+
 interface NoteFormProps {
   onAddItem: (item: NoteItem) => void
   customTotal: string
@@ -19,6 +42,7 @@ export default function NoteForm({
 }: NoteFormProps) {
   const [name, setName] = useState('')
   const [quantity, setQuantity] = useState(1)
+  const [unit, setUnit] = useState('pcs')
   const [price, setPrice] = useState('')
 
   const handleAdd = () => {
@@ -29,11 +53,13 @@ export default function NoteForm({
     onAddItem({
       name: name.trim(),
       quantity: qty,
+      unit,
       price: p,
       total: qty * p,
     })
     setName('')
     setQuantity(1)
+    setUnit('pcs')
     setPrice('')
   }
 
@@ -55,7 +81,7 @@ export default function NoteForm({
             />
           </label>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <label className="form-control w-full">
               <span className="label-text text-sm font-medium mb-1.5">Jumlah</span>
               <input
@@ -65,6 +91,21 @@ export default function NoteForm({
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
               />
+            </label>
+
+            <label className="form-control w-full">
+              <span className="label-text text-sm font-medium mb-1.5">Satuan</span>
+              <select
+                className="select select-bordered w-full h-11"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+              >
+                {UNITS.map((u) => (
+                  <option key={u.value} value={u.value}>
+                    {u.label}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="form-control w-full">
