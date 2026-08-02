@@ -4,7 +4,7 @@ import type { NoteItem } from '../../types'
 
 export interface ReceiptBusiness {
   displayName: string | null
-  logoBase64: string | null
+  logoUrl: string | null
   phone: string | null
   instagram: string | null
   whatsapp: string | null
@@ -184,7 +184,7 @@ const NoteReceipt = forwardRef<HTMLDivElement, NoteReceiptProps>(function NoteRe
   { business, items, grandTotal, noteNumber, date, customerName, customerPhone },
   ref,
 ) {
-  const logoUrl = business?.logoBase64 || null
+  const logoUrl = business?.logoUrl || null
 
   return (
     <div ref={ref} style={s.wrapper}>

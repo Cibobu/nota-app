@@ -30,6 +30,7 @@ model BusinessProfile {
   whatsapp    String?
   website     String?
   logoBase64  String?
+  logoUrl     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

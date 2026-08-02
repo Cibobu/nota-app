@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { Camera, ImagePlus, Mail, MapPin, Phone, Store, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router-dom'
@@ -8,6 +10,7 @@ import { useAuth } from '../lib/auth'
 export default function Profile() {
   const { user, profile, isNew, setProfile } = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState({
@@ -21,7 +24,8 @@ export default function Profile() {
     website: '',
   })
   const [saving, setSaving] = useState(false)
-  const [logoBase64, setLogoBase64] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [waSameAsPhone, setWaSameAsPhone] = useState(false)
 
   useEffect(() => {
@@ -37,9 +41,8 @@ export default function Profile() {
     }
     setForm(init)
 
-    if (profile?.logoBase64) {
-      setLogoBase64(profile.logoBase64)
-    }
+    const currentLogo = profile?.logoUrl || profile?.logoBase64 || null
+    if (currentLogo) setLogoUrl(currentLogo)
 
     if (profile?.whatsapp === (profile?.phone || user?.phone)) {
       setWaSameAsPhone(true)
@@ -51,6 +54,32 @@ export default function Profile() {
     if (checked) {
       setForm((prev) => ({ ...prev, whatsapp: form.phone || user?.phone || '' }))
     }
+  }
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Ukuran maksimal 2MB')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const result = await api.profile.uploadLogo(file)
+      setLogoUrl(result.logoUrl)
+      toast.success('Logo siap disimpan')
+    } catch {
+      toast.error('Gagal upload logo')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleRemoveLogo = () => {
+    setLogoUrl(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleSave = async () => {
@@ -82,9 +111,10 @@ export default function Profile() {
         instagram: form.instagram.trim().replace('@', '') || null,
         whatsapp: form.whatsapp.trim() || null,
         website: form.website.trim() || null,
-        logoBase64: logoBase64 || null,
+        logoUrl: logoUrl || null,
       })
       setProfile(result)
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
       toast.success('Profil berhasil disimpan')
       if (isNew) navigate('/create')
     } catch (err) {
@@ -94,26 +124,7 @@ export default function Profile() {
     }
   }
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Ukuran maksimal 2MB')
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = () => {
-      setLogoBase64(reader.result as string)
-      toast.success('Logo siap disimpan')
-    }
-    reader.onerror = () => toast.error('Gagal membaca file')
-    reader.readAsDataURL(file)
-  }
-
   const initials = (form.displayName || 'N').slice(0, 2).toUpperCase()
-
   const registeredViaEmail = !!user?.email
   const registeredViaPhone = !!user?.phone
 
@@ -123,30 +134,37 @@ export default function Profile() {
         <title>Profil Bisnis - Nota Pintar</title>
       </Helmet>
 
-      <div className="max-w-xl mx-auto space-y-6">
+      <div className="max-w-xl mx-auto space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-heading font-bold text-neutral">
             {isNew ? 'Lengkapi Profil Bisnis' : 'Profil Bisnis'}
           </h1>
-          {isNew && <span className="badge badge-accent badge-sm">Langkah 1 dari 2</span>}
+          {isNew && (
+            <span className="badge badge-accent badge-sm font-medium">Langkah 1 dari 2</span>
+          )}
         </div>
 
         {isNew && (
           <div className="alert alert-info text-sm">
-            Silakan isi data bisnis kamu terlebih dahulu sebelum membuat nota
+            <span>Silakan isi data bisnis kamu terlebih dahulu sebelum membuat nota</span>
           </div>
         )}
 
-        <div className="card bg-base-100 shadow-sm border border-base-200">
-          <div className="card-body p-5">
-            <h3 className="card-title text-sm font-heading mb-3">Logo Bisnis</h3>
-            <div className="flex items-center gap-4">
+        <div className="card bg-base-100 shadow-sm border border-base-300">
+          <div className="card-body p-5 sm:p-6">
+            <h3 className="card-title text-sm font-heading mb-4">
+              <Camera className="w-4 h-4 text-primary" />
+              Logo Bisnis
+            </h3>
+            <div className="flex items-center gap-5">
               <div className="avatar">
-                <div className="w-20 rounded-box bg-base-200 flex items-center justify-center overflow-hidden">
-                  {logoBase64 ? (
-                    <img src={logoBase64} alt="Logo" className="object-contain w-full h-full" />
+                <div className="w-20 rounded-box bg-base-200 flex items-center justify-center overflow-hidden border border-base-300">
+                  {uploading ? (
+                    <span className="loading loading-spinner loading-sm text-primary" />
+                  ) : logoUrl ? (
+                    <img src={logoUrl} alt="Logo" className="object-contain w-full h-full" />
                   ) : (
-                    <span className="text-2xl font-heading font-bold text-base-content/40">
+                    <span className="text-2xl font-heading font-bold text-base-content/30">
                       {initials}
                     </span>
                   )}
@@ -159,19 +177,18 @@ export default function Profile() {
                   accept="image/*"
                   onChange={handleLogoUpload}
                   className="file-input file-input-bordered file-input-sm w-full"
+                  disabled={uploading}
                 />
-                <p className="text-xs text-base-content/60 mt-1">
-                  Max 2MB. JPG, PNG, WebP. {!logoBase64 ? 'Kosongi untuk logo otomatis' : ''}
+                <p className="text-xs text-base-content/50 mt-1.5">
+                  Max 2MB. JPG, PNG, WebP. {!logoUrl ? 'Kosongi untuk logo otomatis' : ''}
                 </p>
-                {logoBase64 && (
+                {logoUrl && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setLogoBase64(null)
-                      if (fileInputRef.current) fileInputRef.current.value = ''
-                    }}
+                    onClick={handleRemoveLogo}
                     className="btn btn-ghost btn-xs text-error mt-1"
                   >
+                    <Trash2 className="w-3.5 h-3.5" />
                     Hapus logo
                   </button>
                 )}
@@ -180,12 +197,15 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow-sm border border-base-200">
-          <div className="card-body p-5 space-y-4">
-            <h3 className="card-title text-sm font-heading">Data Bisnis</h3>
+        <div className="card bg-base-100 shadow-sm border border-base-300">
+          <div className="card-body p-5 sm:p-6 space-y-5">
+            <h3 className="card-title text-sm font-heading">
+              <Store className="w-4 h-4 text-primary" />
+              Data Bisnis
+            </h3>
 
             <label className="form-control w-full">
-              <span className="label-text">
+              <span className="label-text text-sm font-medium mb-1.5">
                 Nama Pemilik / Toko / Brand <span className="text-error">*</span>
               </span>
               <input
@@ -198,7 +218,8 @@ export default function Profile() {
             </label>
 
             <label className="form-control w-full">
-              <span className="label-text">
+              <span className="label-text text-sm font-medium mb-1.5">
+                <MapPin className="w-3.5 h-3.5 inline mr-1" />
                 Alamat <span className="text-error">*</span>
               </span>
               <textarea
@@ -210,9 +231,10 @@ export default function Profile() {
               />
             </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <label className="form-control w-full">
-                <span className="label-text">
+                <span className="label-text text-sm font-medium mb-1.5">
+                  <Phone className="w-3.5 h-3.5 inline mr-1" />
                   No. Handphone
                   {registeredViaEmail && <span className="text-error"> *</span>}
                 </span>
@@ -229,14 +251,15 @@ export default function Profile() {
                   </span>
                 )}
                 {user?.phone && (
-                  <span className="label-text-alt text-base-content/60 text-xs mt-1">
+                  <span className="label-text-alt text-base-content/50 text-xs mt-1">
                     Terisi otomatis dari data pendaftaran
                   </span>
                 )}
               </label>
 
               <label className="form-control w-full">
-                <span className="label-text">
+                <span className="label-text text-sm font-medium mb-1.5">
+                  <Mail className="w-3.5 h-3.5 inline mr-1" />
                   Email
                   {registeredViaPhone && <span className="text-error"> *</span>}
                 </span>
@@ -253,19 +276,21 @@ export default function Profile() {
                   </span>
                 )}
                 {user?.email && (
-                  <span className="label-text-alt text-base-content/60 text-xs mt-1">
+                  <span className="label-text-alt text-base-content/50 text-xs mt-1">
                     Terisi otomatis dari data pendaftaran
                   </span>
                 )}
               </label>
             </div>
 
-            <div className="divider text-xs text-base-content/60">
+            <div className="divider text-xs text-base-content/40 font-medium">
               Informasi Tambahan (opsional)
             </div>
 
             <label className="form-control w-full">
-              <span className="label-text">Nama Pemilik (jika berbeda)</span>
+              <span className="label-text text-sm font-medium mb-1.5">
+                Nama Pemilik (jika berbeda)
+              </span>
               <input
                 type="text"
                 className="input input-bordered w-full"
@@ -275,11 +300,11 @@ export default function Profile() {
               />
             </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <label className="form-control w-full">
-                <span className="label-text">Instagram</span>
+                <span className="label-text text-sm font-medium mb-1.5">Instagram</span>
                 <div className="join w-full">
-                  <span className="join-item text-xs text-base-content/40 flex items-center px-2 bg-base-200">
+                  <span className="join-item text-xs text-base-content/40 flex items-center px-3 bg-base-200 font-medium">
                     @
                   </span>
                   <input
@@ -293,7 +318,7 @@ export default function Profile() {
               </label>
 
               <label className="form-control w-full">
-                <span className="label-text">WhatsApp</span>
+                <span className="label-text text-sm font-medium mb-1.5">WhatsApp</span>
                 <input
                   type="text"
                   className="input input-bordered w-full"
@@ -315,7 +340,7 @@ export default function Profile() {
             </label>
 
             <label className="form-control w-full">
-              <span className="label-text">Website</span>
+              <span className="label-text text-sm font-medium mb-1.5">Website</span>
               <input
                 type="text"
                 className="input input-bordered w-full"
@@ -330,7 +355,7 @@ export default function Profile() {
         <button
           type="button"
           onClick={handleSave}
-          className="btn btn-primary w-full"
+          className="btn btn-primary w-full h-12 font-semibold transition-all duration-200"
           disabled={saving}
         >
           {saving ? (

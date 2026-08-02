@@ -19,9 +19,11 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@vercel/node": "^5.1.14",
+    "cloudinary": "^2.10.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.2.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

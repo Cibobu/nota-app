@@ -1,3 +1,4 @@
+import { ArrowLeft } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { Link, useParams } from 'react-router-dom'
 import NotePreview from '../components/nota/NotePreview'
@@ -21,7 +22,7 @@ export default function Preview() {
   if (!note) {
     return (
       <div className="text-center py-16">
-        <p className="text-base-content/60 mb-4">Nota tidak ditemukan</p>
+        <p className="text-base-content/50 mb-4">Nota tidak ditemukan</p>
         <Link to="/create" className="btn btn-primary btn-sm">
           Buat Nota Baru
         </Link>
@@ -44,10 +45,11 @@ export default function Preview() {
         />
       </Helmet>
 
-      <div className="space-y-4">
+      <div className="space-y-4 animate-fade-in">
         <div className="flex items-center justify-between no-print">
-          <Link to="/" className="btn btn-ghost btn-sm">
-            &larr; Kembali
+          <Link to="/history" className="btn btn-ghost btn-sm">
+            <ArrowLeft className="w-4 h-4" />
+            Kembali
           </Link>
           <ShareButton token={note.shareToken} />
         </div>

@@ -35,11 +35,17 @@ export function AuthProvider({ children, apiBase }: { children: ReactNode; apiBa
     if (saved.token && saved.user) {
       setUser(saved.user)
       setToken(saved.token)
+
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10_000)
+
       fetch(`${apiBase}/auth/me`, {
         headers: { Authorization: `Bearer ${saved.token}` },
+        signal: controller.signal,
       })
         .then((r) => r.json())
         .then((data) => {
+          clearTimeout(timeoutId)
           if (data.user) {
             setUser(data.user)
             setProfileState(data.profile)
@@ -51,7 +57,7 @@ export function AuthProvider({ children, apiBase }: { children: ReactNode; apiBa
           }
         })
         .catch(() => {
-          // offline, use cached data
+          clearTimeout(timeoutId)
         })
         .finally(() => setLoading(false))
     } else {
@@ -101,7 +107,18 @@ export function AuthProvider({ children, apiBase }: { children: ReactNode; apiBa
 
   return (
     <AuthContext.Provider value={{ user, profile, token, isNew, login, logout, setProfile }}>
-      {!loading && children}
+      {loading ? (
+        <div className="min-h-dvh bg-base-200 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto animate-bounce shadow-lg">
+              <span className="text-2xl font-heading font-bold text-white">N</span>
+            </div>
+            <p className="text-base-content/60 text-sm animate-pulse">Memuat...</p>
+          </div>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   )
 }

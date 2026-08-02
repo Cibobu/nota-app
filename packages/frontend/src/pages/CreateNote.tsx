@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { FileText, Trash2 } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router-dom'
@@ -96,16 +97,19 @@ export default function CreateNote() {
         />
       </Helmet>
 
-      <div className="space-y-6">
-        <h1 className="text-xl font-heading font-bold text-neutral">Buat Nota Baru</h1>
+      <div className="space-y-6 animate-fade-in">
+        <h1 className="text-xl font-heading font-bold text-neutral">
+          <FileText className="w-5 h-5 inline mr-2" />
+          Buat Nota Baru
+        </h1>
 
-        <div className="card bg-base-100 shadow-sm border border-base-200">
+        <div className="card bg-base-100 shadow-sm border border-base-300">
           <div className="card-body p-4 sm:p-6 space-y-4">
             <h3 className="card-title text-sm font-heading">Informasi Nota</h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="form-control w-full">
-                <span className="label-text">No. Nota</span>
+                <span className="label-text text-sm font-medium mb-1.5">No. Nota</span>
                 <input
                   type="text"
                   className="input input-bordered w-full"
@@ -113,13 +117,15 @@ export default function CreateNote() {
                   readOnly
                   placeholder="Menghitung..."
                 />
-                <span className="label-text-alt text-base-content/60 text-xs mt-1">
+                <span className="label-text-alt text-base-content/50 text-xs mt-1">
                   Nomor nota dibuat otomatis
                 </span>
               </label>
 
               <label className="form-control w-full">
-                <span className="label-text">Kepada Yth (Nama Pelanggan)</span>
+                <span className="label-text text-sm font-medium mb-1.5">
+                  Kepada Yth (Nama Pelanggan)
+                </span>
                 <input
                   type="text"
                   className="input input-bordered w-full"
@@ -131,7 +137,9 @@ export default function CreateNote() {
             </div>
 
             <label className="form-control w-full sm:w-1/2">
-              <span className="label-text">No. HP Pelanggan (opsional)</span>
+              <span className="label-text text-sm font-medium mb-1.5">
+                No. HP Pelanggan (opsional)
+              </span>
               <input
                 type="tel"
                 inputMode="tel"
@@ -153,9 +161,9 @@ export default function CreateNote() {
         />
 
         {items.length > 0 && (
-          <div className="card bg-base-100 shadow-sm border border-base-200">
+          <div className="card bg-base-100 shadow-sm border border-base-300">
             <div className="card-body p-4 sm:p-6">
-              <h3 className="card-title text-sm font-heading mb-2">Daftar Item</h3>
+              <h3 className="card-title text-sm font-heading mb-3">Daftar Item</h3>
               <div className="overflow-x-auto">
                 <table className="table table-zebra text-xs">
                   <thead>
@@ -171,7 +179,7 @@ export default function CreateNote() {
                   <tbody>
                     {items.map((item, i) => (
                       <tr key={`${item.name}-${i}`}>
-                        <td>{i + 1}</td>
+                        <td className="text-base-content/50">{i + 1}</td>
                         <td>{item.name}</td>
                         <td className="text-center">{item.quantity}</td>
                         <td className="text-right">{item.price.toLocaleString('id-ID')}</td>
@@ -182,9 +190,9 @@ export default function CreateNote() {
                           <button
                             type="button"
                             onClick={() => handleRemoveItem(i)}
-                            className="btn btn-ghost btn-xs text-error"
+                            className="btn btn-ghost btn-xs text-error h-8 w-8"
                           >
-                            Hapus
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </td>
                       </tr>
@@ -193,8 +201,8 @@ export default function CreateNote() {
                 </table>
               </div>
 
-              <div className="flex justify-between items-center mt-3 pt-3 border-t border-base-200">
-                <span className="font-heading font-bold text-sm">Grand Total</span>
+              <div className="flex justify-between items-center mt-4 pt-4 border-t border-base-300">
+                <span className="font-heading font-semibold text-sm">Grand Total</span>
                 <span className="text-xl font-heading font-bold text-primary tabular-nums">
                   Rp {grandTotal.toLocaleString('id-ID')}
                 </span>
@@ -223,16 +231,16 @@ export default function CreateNote() {
         )}
 
         {items.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <button
               type="button"
               onClick={handleSaveToHistory}
-              className="btn btn-outline w-full no-print"
+              className="btn btn-outline w-full no-print h-11 font-medium transition-all duration-200"
             >
               {createNote.isPending ? <span className="loading loading-spinner" /> : null}
               {createNote.isPending ? 'Menyimpan...' : 'Simpan ke Riwayat'}
             </button>
-            <p className="text-xs text-base-content/60 text-center">
+            <p className="text-xs text-base-content/50 text-center">
               Klik Download PDF/JPG akan otomatis menyimpan nota ke riwayat
             </p>
           </div>

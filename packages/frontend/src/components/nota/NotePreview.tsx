@@ -35,7 +35,7 @@ export default function NotePreview({
   const business = profile
     ? {
         displayName: profile.displayName,
-        logoBase64: profile.logoBase64,
+        logoUrl: profile.logoUrl || profile.logoBase64,
         phone: profile.phone,
         instagram: profile.instagram,
         whatsapp: profile.whatsapp,

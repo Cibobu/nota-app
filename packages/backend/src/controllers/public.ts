@@ -33,6 +33,7 @@ export async function getPublicNote(req: Request, res: Response) {
         instagram: profile?.instagram || null,
         whatsapp: profile?.whatsapp || null,
         logoBase64: profile?.logoBase64 || null,
+        logoUrl: profile?.logoUrl || null,
       },
     })
   } catch (error) {

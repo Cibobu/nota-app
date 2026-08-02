@@ -1,3 +1,4 @@
+import { FileText, LogIn, Mail } from 'lucide-react'
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router-dom'
@@ -32,42 +33,53 @@ export default function Login() {
         <title>Masuk - Nota Pintar</title>
       </Helmet>
 
-      <div className="card bg-base-100 shadow-xl w-full max-w-sm">
+      <div className="card bg-base-100 shadow-sm border border-base-300 w-full max-w-sm animate-fade-in-up">
         <div className="card-body p-6 sm:p-8">
-          <div className="text-center mb-6">
-            <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
-              <span className="text-2xl font-heading font-bold text-white">N</span>
+          <div className="text-center mb-8">
+            <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mx-auto mb-5">
+              <FileText className="w-7 h-7 text-white" />
             </div>
-            <h1 className="text-xl font-heading font-bold">Nota Pintar</h1>
-            <p className="text-sm text-base-content/60 mt-1">
+            <h1 className="text-2xl font-heading font-bold text-neutral">Nota Pintar</h1>
+            <p className="text-sm text-base-content/50 mt-2">
               Masukkan email atau no HP untuk memulai
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <label className="form-control w-full">
-              <span className="label-text text-sm">Email atau No. Handphone</span>
-              <input
-                type="text"
-                className="input input-bordered w-full"
-                placeholder="contoh@email.com atau 0812xxxx"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                autoComplete="username"
-                required
-              />
+              <span className="label-text text-sm font-medium mb-2">Email atau No. Handphone</span>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/30" />
+                <input
+                  type="text"
+                  className="input input-bordered w-full pl-11 h-12"
+                  placeholder="contoh@email.com atau 0812xxxx"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  autoComplete="username"
+                  required
+                  autoFocus
+                />
+              </div>
             </label>
 
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className="btn btn-primary w-full h-12 mt-3 font-semibold transition-all duration-200"
               disabled={loading || !identifier.trim()}
             >
-              {loading ? <span className="loading loading-spinner" /> : 'Masuk'}
+              {loading ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  Masuk
+                </>
+              )}
             </button>
           </form>
 
-          <p className="text-xs text-base-content/60 text-center mt-4">
+          <p className="text-xs text-base-content/40 text-center mt-5">
             Dengan masuk, kamu menyetujui penggunaan data untuk aplikasi ini
           </p>
         </div>

@@ -36,6 +36,21 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(data),
       }),
+    uploadLogo: async (file: File) => {
+      const formData = new FormData()
+      formData.append('logo', file)
+      const token = getToken()
+      const res = await fetch(`${BASE_URL}/profile/upload-logo`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Upload failed' }))
+        throw new Error(err.error || 'Upload failed')
+      }
+      return res.json() as Promise<{ logoUrl: string }>
+    },
   },
   notes: {
     getAll: () => request<import('../types').Note[]>('/notes'),

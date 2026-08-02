@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { NoteItem } from '../../types'
 
@@ -37,16 +38,16 @@ export default function NoteForm({
   }
 
   return (
-    <div className="card bg-base-100 shadow-sm border border-base-200">
+    <div className="card bg-base-100 shadow-sm border border-base-300">
       <div className="card-body p-4 sm:p-6">
-        <h3 className="card-title text-sm font-heading mb-3">Tambah Item</h3>
+        <h3 className="card-title text-sm font-heading mb-4">Tambah Item</h3>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           <label className="form-control w-full">
-            <span className="label-text text-sm">Nama Barang / Jasa</span>
+            <span className="label-text text-sm font-medium mb-1.5">Nama Barang / Jasa</span>
             <input
               type="text"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full h-11"
               placeholder="Contoh: Buku Tulis"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -54,12 +55,12 @@ export default function NoteForm({
             />
           </label>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <label className="form-control w-full">
-              <span className="label-text text-sm">Jumlah</span>
+              <span className="label-text text-sm font-medium mb-1.5">Jumlah</span>
               <input
                 type="number"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full h-11"
                 min={1}
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
@@ -67,10 +68,10 @@ export default function NoteForm({
             </label>
 
             <label className="form-control w-full">
-              <span className="label-text text-sm">Harga Satuan</span>
+              <span className="label-text text-sm font-medium mb-1.5">Harga Satuan</span>
               <input
                 type="number"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full h-11"
                 min={0}
                 placeholder="Rp"
                 value={price}
@@ -88,12 +89,12 @@ export default function NoteForm({
                 checked={useCustomTotal}
                 onChange={(e) => onUseCustomTotalChange(e.target.checked)}
               />
-              Input total manual
+              <span className="font-medium">Input total manual</span>
             </label>
 
             {useCustomTotal && (
               <label className="form-control w-40">
-                <span className="label-text text-xs">Total Manual</span>
+                <span className="label-text text-xs font-medium mb-1">Total Manual</span>
                 <input
                   type="number"
                   className="input input-bordered input-sm w-full"
@@ -108,10 +109,11 @@ export default function NoteForm({
           <button
             type="button"
             onClick={handleAdd}
-            className="btn btn-outline btn-primary w-full"
+            className="btn btn-outline btn-primary w-full h-11 font-medium transition-all duration-200"
             disabled={!name.trim() || (!price && !useCustomTotal)}
           >
-            + Tambah Item
+            <Plus className="w-4 h-4" />
+            Tambah Item
           </button>
         </div>
       </div>

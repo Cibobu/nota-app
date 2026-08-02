@@ -5,7 +5,7 @@ export function useProfile() {
   return useQuery({
     queryKey: ['profile'],
     queryFn: api.profile.get,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000,
     gcTime: 10 * 60 * 1000,
   })
 }

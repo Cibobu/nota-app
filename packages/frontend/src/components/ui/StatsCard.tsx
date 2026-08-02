@@ -13,10 +13,12 @@ export default function StatsCard({ title, value, icon, color }: StatsCardProps)
   }
 
   return (
-    <div className="stat bg-base-100 rounded-box shadow-sm border border-base-200">
+    <div className="stat bg-base-100 rounded-box shadow-sm border border-base-300">
       <div className={`stat-figure ${colorClass[color]}`}>{icon}</div>
-      <div className="stat-title text-sm">{title}</div>
-      <div className={`stat-value ${colorClass[color]}`}>{value.toLocaleString('id-ID')}</div>
+      <div className="stat-title text-sm font-medium text-base-content/50">{title}</div>
+      <div className={`stat-value text-2xl ${colorClass[color]} font-heading`}>
+        {value.toLocaleString('id-ID')}
+      </div>
     </div>
   )
 }

@@ -4,44 +4,68 @@
 @plugin "daisyui/theme" {
   name: "notapintar";
   default: true;
-  --color-primary: #1e40af;
+  --color-primary: #1E3A5F;
   --color-primary-content: #ffffff;
-  --color-secondary: #059669;
+  --color-secondary: #2563EB;
   --color-secondary-content: #ffffff;
-  --color-accent: #f59e0b;
+  --color-accent: #059669;
   --color-accent-content: #ffffff;
-  --color-neutral: #1f2937;
-  --color-neutral-content: #f8fafc;
-  --color-base-100: #ffffff;
-  --color-base-200: #f8fafc;
-  --color-base-300: #e2e8f0;
-  --color-base-content: #1f2937;
-  --color-info: #3b82f6;
+  --color-neutral: #0F172A;
+  --color-neutral-content: #F8FAFC;
+  --color-base-100: #FFFFFF;
+  --color-base-200: #F8FAFC;
+  --color-base-300: #E4E7EB;
+  --color-base-content: #0F172A;
+  --color-info: #2563EB;
   --color-info-content: #ffffff;
-  --color-success: #10b981;
+  --color-success: #059669;
   --color-success-content: #ffffff;
-  --color-warning: #f59e0b;
+  --color-warning: #D97706;
   --color-warning-content: #ffffff;
-  --color-error: #ef4444;
+  --color-error: #DC2626;
   --color-error-content: #ffffff;
-  --font-family: "Inter", sans-serif;
-  --font-family-heading: "Plus Jakarta Sans", sans-serif;
+  --font-family: "Open Sans", sans-serif;
+  --font-family-heading: "Poppins", sans-serif;
   --rounded-box: 0.5rem;
   --rounded-btn: 0.375rem;
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .font-heading {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 @media print {
   .no-print {
     display: none !important;
   }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s ease-out;
 }

@@ -17,6 +17,7 @@ export interface BusinessProfile {
   whatsapp: string | null
   website: string | null
   logoBase64: string | null
+  logoUrl: string | null
   createdAt: string
   updatedAt: string
 }
@@ -48,6 +49,7 @@ export interface PublicNoteBusiness {
   instagram: string | null
   whatsapp: string | null
   logoBase64: string | null
+  logoUrl: string | null
 }
 
 export interface PublicNote {
