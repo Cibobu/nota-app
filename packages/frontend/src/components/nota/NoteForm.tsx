@@ -2,35 +2,18 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { NoteItem } from '../../types'
 
-const UNITS = [
-  { value: 'pcs', label: 'Pcs' },
-  { value: 'buah', label: 'Buah' },
-  { value: 'lusin', label: 'Lusin' },
-  { value: 'kodi', label: 'Kodi' },
-  { value: 'pack', label: 'Pack' },
-  { value: 'dus', label: 'Dus' },
-  { value: 'kg', label: 'Kg' },
-  { value: 'gram', label: 'Gram' },
-  { value: 'ons', label: 'Ons' },
-  { value: 'liter', label: 'Liter' },
-  { value: 'ml', label: 'ml' },
-  { value: 'meter', label: 'Meter' },
-  { value: 'cm', label: 'cm' },
-  { value: 'lembar', label: 'Lembar' },
-  { value: 'set', label: 'Set' },
-  { value: 'pasang', label: 'Pasang' },
-  { value: 'orang', label: 'Orang' },
-  { value: 'unit', label: 'Unit' },
-  { value: 'rim', label: 'Rim' },
-  { value: 'batang', label: 'Batang' },
-]
-
 interface NoteFormProps {
   onAddItem: (item: NoteItem) => void
   customTotal: string
   onCustomTotalChange: (val: string) => void
   useCustomTotal: boolean
   onUseCustomTotalChange: (val: boolean) => void
+}
+
+function parseNum(raw: string): number {
+  const cleaned = raw.replace(/\./g, '').replace(',', '.')
+  const n = Number(cleaned)
+  return Number.isFinite(n) ? n : 0
 }
 
 export default function NoteForm({
@@ -41,25 +24,23 @@ export default function NoteForm({
   onUseCustomTotalChange,
 }: NoteFormProps) {
   const [name, setName] = useState('')
-  const [quantity, setQuantity] = useState(1)
-  const [unit, setUnit] = useState('pcs')
+  const [qtyInput, setQtyInput] = useState('1')
   const [price, setPrice] = useState('')
 
   const handleAdd = () => {
     if (!name.trim()) return
     if (!price && !useCustomTotal) return
-    const qty = Number(quantity) || 1
-    const p = Number(price) || 0
+    const qty = parseNum(qtyInput) || 1
+    const p = parseNum(price) || 0
     onAddItem({
       name: name.trim(),
       quantity: qty,
-      unit,
+      unit: 'pcs',
       price: p,
       total: qty * p,
     })
     setName('')
-    setQuantity(1)
-    setUnit('pcs')
+    setQtyInput('1')
     setPrice('')
   }
 
@@ -81,39 +62,34 @@ export default function NoteForm({
             />
           </label>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <label className="form-control w-full">
               <span className="label-text text-sm font-medium mb-1.5">Jumlah</span>
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 className="input input-bordered w-full h-11"
-                min={1}
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
+                placeholder="1"
+                value={qtyInput}
+                onChange={(e) => {
+                  const v = e.target.value
+                  if (v === '' || /^[0-9]*[.,]?[0-9]*$/.test(v)) {
+                    setQtyInput(v)
+                  }
+                }}
+                onBlur={() => {
+                  if (qtyInput === '' || qtyInput === '0') setQtyInput('1')
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
               />
-            </label>
-
-            <label className="form-control w-full">
-              <span className="label-text text-sm font-medium mb-1.5">Satuan</span>
-              <select
-                className="select select-bordered w-full h-11"
-                value={unit}
-                onChange={(e) => setUnit(e.target.value)}
-              >
-                {UNITS.map((u) => (
-                  <option key={u.value} value={u.value}>
-                    {u.label}
-                  </option>
-                ))}
-              </select>
             </label>
 
             <label className="form-control w-full">
               <span className="label-text text-sm font-medium mb-1.5">Harga Satuan</span>
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 className="input input-bordered w-full h-11"
-                min={0}
                 placeholder="Rp"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
@@ -137,7 +113,8 @@ export default function NoteForm({
               <label className="form-control w-40">
                 <span className="label-text text-xs font-medium mb-1">Total Manual</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   className="input input-bordered input-sm w-full"
                   placeholder="Rp"
                   value={customTotal}

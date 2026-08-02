@@ -11,29 +11,6 @@ import { useCreateNote, useNextNoteNumber } from '../hooks/useNotes'
 import { useProfile } from '../hooks/useProfile'
 import type { NoteItem } from '../types'
 
-const UNIT_LABELS: Record<string, string> = {
-  pcs: 'Pcs',
-  buah: 'Buah',
-  lusin: 'Lusin',
-  kodi: 'Kodi',
-  pack: 'Pack',
-  dus: 'Dus',
-  kg: 'Kg',
-  gram: 'Gram',
-  ons: 'Ons',
-  liter: 'Liter',
-  ml: 'ml',
-  meter: 'Meter',
-  cm: 'cm',
-  lembar: 'Lembar',
-  set: 'Set',
-  pasang: 'Pasang',
-  orang: 'Orang',
-  unit: 'Unit',
-  rim: 'Rim',
-  batang: 'Batang',
-}
-
 export default function CreateNote() {
   const { data: profile } = useProfile()
   const createNote = useCreateNote()
@@ -204,9 +181,7 @@ export default function CreateNote() {
                       <tr key={`${item.name}-${i}`}>
                         <td className="text-base-content/50">{i + 1}</td>
                         <td>{item.name}</td>
-                        <td className="text-center">
-                          {item.quantity} {UNIT_LABELS[item.unit] || item.unit}
-                        </td>
+                        <td className="text-center">{item.quantity}</td>
                         <td className="text-right">{item.price.toLocaleString('id-ID')}</td>
                         <td className="text-right font-medium">
                           {item.total.toLocaleString('id-ID')}

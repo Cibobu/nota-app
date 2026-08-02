@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "npm install --install-strategy=nested",
+  "installCommand": "npm install",
   "buildCommand": "cd ../.. && npm run build -w packages/frontend && cd packages/backend && npx prisma generate && npm run build",
   "functions": {
     "api/index.ts": {
