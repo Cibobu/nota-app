@@ -1,15 +1,16 @@
-import { FileText, LogIn, Mail } from 'lucide-react'
-import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
-import { useAuth } from '../lib/auth'
+'use client'
 
-export default function Login() {
+import { useAuth } from '@/lib/auth'
+import { FileText, LogIn, Mail } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
+
+export default function LoginPage() {
   const [identifier, setIdentifier] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,7 +20,7 @@ export default function Login() {
     try {
       const { isNew } = await login(identifier.trim())
       toast.success(isNew ? 'Selamat datang! Silakan lengkapi profil' : 'Selamat datang kembali!')
-      navigate(isNew ? '/profile' : '/')
+      router.push(isNew ? '/profile' : '/')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Gagal login')
     } finally {
@@ -29,10 +30,6 @@ export default function Login() {
 
   return (
     <div className="min-h-dvh bg-base-200 flex items-center justify-center p-4">
-      <Helmet>
-        <title>Masuk - Nota Pintar</title>
-      </Helmet>
-
       <div className="card bg-base-100 shadow-sm border border-base-300 w-full max-w-sm animate-fade-in-up">
         <div className="card-body p-6 sm:p-8">
           <div className="text-center mb-8">
@@ -58,7 +55,6 @@ export default function Login() {
                   onChange={(e) => setIdentifier(e.target.value)}
                   autoComplete="username"
                   required
-                  autoFocus
                 />
               </div>
             </label>

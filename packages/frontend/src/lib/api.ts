@@ -1,5 +1,4 @@
-const raw = import.meta.env.PROD ? import.meta.env.VITE_API_URL || '/api' : '/api'
-const BASE_URL = raw.endsWith('/api') ? raw : `${raw}/api`
+const BASE_URL = '/api'
 
 function getToken(): string | null {
   try {
