@@ -24,13 +24,9 @@ export async function generateMetadata({
   }
 
   const displayName = note.business?.displayName || note.business?.ownerName || 'Nota Pintar'
-  const customerLabel = note.customerName ? `untuk ${note.customerName}` : ''
   const totalFormatted = note.grandTotal.toLocaleString('id-ID')
-  const itemLabel = `${note.items.length} item`
-  const title = `Nota ${note.noteNumber} — ${displayName} | Nota Pintar`
-  const desc = customerLabel
-    ? `Nota ${customerLabel} — ${itemLabel}, total Rp${totalFormatted}. Lihat selengkapnya.`
-    : `${itemLabel} dengan total Rp${totalFormatted}. Nota online dari ${displayName}.`
+  const title = note.customerName ? `Hai ${note.customerName}` : `${displayName} — Nota Pintar`
+  const desc = `Total transaksi adalah sebesar Rp${totalFormatted}. Lihat resi disini ...`
 
   return {
     title,
