@@ -43,14 +43,27 @@ export default function PublicNote() {
     )
   }
 
+  const displayName = note.business?.displayName || note.business?.ownerName || 'Nota Pintar'
+  const customerLabel = note.customerName ? `untuk ${note.customerName}` : ''
+  const totalFormatted = note.grandTotal.toLocaleString('id-ID')
+  const itemLabel = `${note.items.length} item`
+  const desc = customerLabel
+    ? `Nota ${customerLabel} — ${itemLabel}, total Rp${totalFormatted}. Lihat selengkapnya.`
+    : `${itemLabel} dengan total Rp${totalFormatted}. Nota online dari ${displayName}.`
+
   return (
     <div className="min-h-screen bg-base-200">
       <Helmet>
-        <title>Nota {note.noteNumber} - Nota Pintar</title>
+        <title>
+          Nota {note.noteNumber} — {displayName} | Nota Pintar
+        </title>
+        <meta name="description" content={desc} />
         <meta
-          name="description"
-          content={`Nota ${note.noteNumber} - ${note.items.length} item, total ${note.grandTotal.toLocaleString('id-ID')}`}
+          property="og:title"
+          content={`Nota ${note.noteNumber} — ${displayName} | Nota Pintar`}
         />
+        <meta property="og:description" content={desc} />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       <div className="max-w-xl mx-auto p-4 sm:p-6 animate-fade-in">
