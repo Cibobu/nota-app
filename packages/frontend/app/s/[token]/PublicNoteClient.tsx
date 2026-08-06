@@ -90,13 +90,6 @@ export default function PublicNoteClient({ token }: { token: string }) {
           customerPhone={note.customerPhone}
         />
 
-        <p className="text-center text-xs text-base-content/40 mt-6">
-          Dibuat dengan{' '}
-          <Link href="/login" className="link link-primary font-medium">
-            Nota Pintar
-          </Link>{' '}
-          — buat nota online gratis
-        </p>
       </div>
     </div>
   )
