@@ -76,7 +76,7 @@ export default function PublicNoteClient({ token }: { token: string }) {
         <div className="text-center mb-5">
           <span className="badge badge-neutral badge-sm gap-1.5 font-medium">
             <Share2 className="w-3 h-3" />
-            Dokumen ini dibagikan kepada Anda
+            Dokumen ini berhasil dibagikan
           </span>
         </div>
 
