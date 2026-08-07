@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import PublicNoteClient from './PublicNoteClient'
 
 async function fetchPublicNote(token: string) {
-  const baseUrl = process.env.VITE_API_URL || 'http://localhost:4000'
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
   const apiBase = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`
   const res = await fetch(`${apiBase}/public/notes/${encodeURIComponent(token)}`)
   if (!res.ok) return null
